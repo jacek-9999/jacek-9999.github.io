@@ -1,0 +1,51 @@
+<p>
+    Pracowałem kiedyś nad dosyć starym, monolitycznym i rozbudowanym systemem. Klient próbował go rozbudowywać o nowe
+    funkcjonalności, niestety było to po pierwsze trudne a po drugie niebezpieczne.
+    Jakakolwiek większa manipulacja w kodzie wiązała się z nerwami tak programistów jak i biznesu bo często owocowała błędami na produkcji mimo coraz większej ilości testowania manualnego. Paradoksalnie to testerzy często byli kozłem ofiarnym jako ci którzy przeoczyli bugi.</p>
+</p>
+<p>
+    Przemęczyłem się z tym dwa tygodnie po dołączeniu do projektu i dochodzimy od poważnego pytania: marnować dużą część swojego życia w tym błocie czy coś z tym zrobić?
+</p>
+<p>
+    Odpowiedź była łatwiejsza niż się wydaje. Testowanie starszych aplikacji PHP jest prostsze niż np. Laravela.
+</p>
+<p>
+    Głównym wrogiem testowania są „twarde zależności”. Testujesz klasę, klasa potrzebuje do swojego działania innych klas. Dzisiaj zwykle przekazuje się je w konstruktorze.
+</p>
+<p>
+    W słabych rozwiązaniach tworzysz taką zależną klasę z powietrza słowem „new”.
+    Ale stary kod PHP często nie jest słabym rozwiązaniem jeśli chodzi o testowalność o ile tam zależności są w superglobalnych i tak było w tym przypadku.
+    Mniejsza o to w której superglobalnej bo pomysły są różne. Ważne natomiast, że superglobalną możesz nadpisywać w każdym miejscu arbitralnie.
+</p>
+<p>
+    Dlatego nadużywanie superglobalnych jest antywzorcem.
+    To jeden wielki bałagan, używasz superglobalnej w miejscu x, a możesz modyfikować ją w miejscu y.
+    W zupełnie innej klasie, bez klasy, bez logicznego związku.
+    Odpowiednik instrukcji goto i dlatego już się tego nie używa bezpośrednio tylko za pomocą bibliotek które operują na superglobalnych w cywilizowany sposób, z zasadami enkapsulacji.
+</p>
+<p>
+    W przypadku testów ta wada staje się zaletą.
+    Potrzebujesz przetestować klasę, ona ma twarde zależności w superglobalnych. Co robic? Co robić?
+    Na początku testu przed ustanowieniem instancji testowanej klasy nadpisujesz superglobalną klasę fejkowym,
+    uproszczonym obiektem dysponującym metodami takimi jak podrabiana zależność. Nazywanym też Mockiem jak kto woli.
+</p>
+<p>
+    Potem instancja testowanej klasy połyka podmienioną zależność i możesz testować to co potrzebujesz.
+    Tak działałem w tym projekcie. Kilka dni pisania testów przy okazji robienia różnych zadań.
+    Testowanie wejścia i wyjścia metod, różnych możliwości... Zrozumienie jak to działa.
+</p>
+<p>
+    Spóźniłeś się kiedyś z założeniem kół zimowych przed przyjściem lodówki na drodze? Fajnie samochód jeździł?
+    Tak właśnie wygląda praca nad projektem w PHP bez testów. Jazda bez trzymanki, ciągły poślizg, brak kontroli nad sytuacją.
+</p>
+<p>
+    Testy są jak założenie kół zimowych. Nie muszą być to testy według jakichś poważnych metodyk.
+    Dojdź do momentu gdy umiesz uruchomić tę klasę w izolacji, uruchomić jej metodę i sprawdzić co zwróciła. Sprawdź jak działa z różnymi danymi, z błędnymi danymi, czy rzuca spodziewane wyjątki. Potem tak samo z następną metodą, i następną. Następną klasą.
+</p>
+<p>
+    Nie bój się o czas. Te testy uruchamiają się i tak szybciej niż wciskanie F5 w przeglądarce. Nie kombinuj nadmiernie z pokryciem testowanego kodu, testuj ważne części systemu. Jeśli chcesz używaj PHP Unit. Nie chcesz, napisz customowy skrypt do odpalania tego bajzlu. Ale utrzymuj kontrolę testami nad tym co się dzieje nawet jeśli inne osoby w zespole ich nie używają.
+</p>
+<p>
+    Mi testy wielokrotnie uratowały cztery litery gdy tacy właśnie mądrale wkręcali mi, że coś działa inaczej niż naprawdę. Ja widzę w teście czarno na białym, że coś działa inaczej niż panuje o tym przekonanie mimo że pracuje miesiąc przy projekcie. I potrafię wybronić się od zarzutów gościa który jest w projekcie latami i nie testuje. Bo on nie ma pojęcia jak to naprawdę działa. To jest potęga testów i wiedzy którą przekazują. Nie zielone kółko gdzieś w pajplajnie CI/CD, nie pokrycie testami nieistotnego kodu.
+</p>
+
