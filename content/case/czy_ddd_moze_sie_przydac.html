@@ -3,7 +3,7 @@
 <hr>
 </p>
 <p>
-    Większość aplikacji webowych jest CRUD-em. Czasem prostym, czasem ma kilka ifów po drodze.
+    Większość aplikacji webowych jest CRUD-em. Czasem prostym, czasem ma kilka if-ów po drodze.
     W ostatnich latach buzzwordem jest skrót DDD czyli Domain-Driven Design.
     Jest to zbiór technik mapowania skomplikowanych reguł biznesowych w aplikacjach które CRUD-em nie są.
     Często DDD stosowane jest z techniką Event Strormingu w której eksperci domenowi(np. główny księgowy z działu który używa danego oprogramowania)
@@ -14,10 +14,10 @@
     Ogólnie rzecz biorą są to techniki do rozległych systemów klasy Enterprise,
     kierowanych do dużych organizacji. Na tyle skomplikowane, że specjaliści DDD zwykle nie rozumieją za pierwszym razem książki Erica Evansa
     od której zaczął się hype na DDD.
-    Wśród kilkudziesięciu projektow przy których pracowałem techniki tej nie używano w żadnym.
+    Wśród kilkudziesięciu projektów przy których pracowałem techniki tej nie używano w żadnym.
     Były wśród nich projekty który swym rozmiarem pasowałyby do DDD.
     Ale w większości nie było potrzeby stosowania tego.
-    Zresztą stoswanie DDD na siłę aby mieć wpis do CV kończy się wydumanym podziałem monolitycznej aplikacji na domeny biznesowe,
+    Zresztą stosowanie DDD na siłę aby mieć wpis do CV kończy się wydumanym podziałem monolitycznej aplikacji na domeny biznesowe,
     utworzeniem mikroserwisów i stworzeniem rozproszonego monolitu który będzie jeszcze gorszy niż oryginał bo dołoży opóźnienia sieciowe.
 </p>
 <p> Pracowałem jednak w dwóch projektach gdzie DDD miałoby sens.
@@ -36,12 +36,12 @@
 <p>
     Pozostaje sprawa couplingu tych aplikacji. Pierwsza aplikacja oferuje płatne konta z różnymi poziomami usługi.
     Czyli proste odpytywanie aplikacja => moduł płatności.
-    Moduł udostępia wersjonowane API aby wygodnie deployować zmiany niezależnie w dwóch aplikacjach.
+    Moduł udostępnia wersjonowane API aby wygodnie deployować zmiany niezależnie w dwóch aplikacjach.
 </p>
 <p>
     Druga aplikacja była bardziej skomplikowana.
     Też oferuje płatne konta ale dodatkowo daje zarabiać innemu typowi użytkowników za akcje wykonane w serwisie.
-    Czyli oprócz wcześniejszej komunikacji  aplikacja => moduł płatności tutaj moduł płatności musi odpytwać aplikację
+    Czyli oprócz wcześniejszej komunikacji  aplikacja => moduł płatności tutaj moduł płatności musi odpytywać aplikację
     aby naliczyć odpowiednią wypłatę użytkownikom. Na tym poziomie komunikacji oba systemy mogłyby się bez problemu odpytywać nawzajem.
 </p>
 
@@ -85,7 +85,7 @@
     Mianowicie kod odpowiedzialny za proces biznesowy ma być zupełnie odizolowany więc w przypadku mikroserwisu do
     kurierów nie było mowy aby jakikolwiek request był wysyłany z warstwy biznesowej.
     Da się tak zrobić i to będzie testowalne oraz odporne na późniejsze zmiany.
-    Pisanie niezależnej warsty biznesowej jest uproszczeniem.
+    Pisanie niezależnej warstwy biznesowej jest uproszczeniem.
 </p>
 
 <p>
@@ -97,8 +97,8 @@
 
 <p>
     Stąd wynika, że pisanie testów, stosowane DDD czy nawet wydzielanie logiki biznesowej jest wyznacznikiem projektów dobrej jakości.
-    Przeciwieństwem dopisywania kolejnego ifa w kontrolorze na 8000 linijek.
-    Ale nie popadajmy w pesymizm. Dobra wiadomośc jest taka, że nie ma takiej aplikacji którą ktoś napisał słabo,
+    Przeciwieństwem dopisywania kolejnego ifa w kontrolerze na 8000 linijek.
+    Ale nie popadajmy w pesymizm. Dobra wiadomość jest taka, że nie ma takiej aplikacji którą ktoś napisał słabo,
     nawet nie ze swojej winy(bo może miał napięty deadline?) której by się nie dało poprawić.
     Dlatego jeśli masz taką aplikację, nie możesz znieść jej bugów, chcesz na niej więcej zarabiać polecam zakładkę kontakt.
 </p>
