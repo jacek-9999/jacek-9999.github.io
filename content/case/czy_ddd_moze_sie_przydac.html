@@ -1,0 +1,104 @@
+<p>
+<h4>Czy DDD może się przydać?</h4>
+<hr>
+</p>
+<p>
+    Większość aplikacji webowych jest CRUD-em. Czasem prostym, czasem ma kilka ifów po drodze.
+    W ostatnich latach buzzwordem jest skrót DDD czyli Domain-Driven Design.
+    Jest to zbiór technik mapowania skomplikowanych reguł biznesowych w aplikacjach które CRUD-em nie są.
+    Często DDD stosowane jest z techniką Event Strormingu w której eksperci domenowi(np. główny księgowy z działu który używa danego oprogramowania)
+    obrazują przebieg zdarzeń w systemie za pomocą przyklejania karteczek do tablicy.
+</p>
+
+<p>
+    Ogólnie rzecz biorą są to techniki do rozległych systemów klasy Enterprise,
+    kierowanych do dużych organizacji. Na tyle skomplikowane, że specjaliści DDD zwykle nie rozumieją za pierwszym razem książki Erica Evansa
+    od której zaczął się hype na DDD.
+    Wśród kilkudziesięciu projektow przy których pracowałem techniki tej nie używano w żadnym.
+    Były wśród nich projekty który swym rozmiarem pasowałyby do DDD.
+    Ale w większości nie było potrzeby stosowania tego.
+    Zresztą stoswanie DDD na siłę aby mieć wpis do CV kończy się wydumanym podziałem monolitycznej aplikacji na domeny biznesowe,
+    utworzeniem mikroserwisów i stworzeniem rozproszonego monolitu który będzie jeszcze gorszy niż oryginał bo dołoży opóźnienia sieciowe.
+</p>
+<p> Pracowałem jednak w dwóch projektach gdzie DDD miałoby sens.
+    Oba były spore, używane przez organizację, obsługiwały kilka typów użytkowników z rozbudowanym flow biznesowym.
+</p>
+<p> Pierwszym typem użytkowników w obu aplikacjach były rozliczenia obsługiwane przez pracowników.
+    To pierwsza rzecz którą można wydzielić i dałoby dużo w obu projektach.
+    Mówię w trybie przypuszczającym bo mówiąc kolokwialnie zleceniodawcy nie mieli kasy.
+    A szkoda, bo jak wspomniałem w przytłaczającej większości przypadków DDD nie ma sensu ale tutaj byłoby sporo korzyści
+    bo moduły rozliczeń zawsze są newralgiczne i skomplikowane. Obrót pieniędzmi to serce  każdego biznesu.
+</p>
+<p> Sam fakt, że moduły rozliczeń byłyby w osobnym repozytorium to zaleta bo nie każdy developer musiałby mieć do nich dostęp.
+    Druga sprawa to logi które w systemach rozliczeniowych są zawsze bardziej newralgiczne niż z reszty aplikacji
+    i nie powinny leżeć pomiędzy logami z aktywności zwykłego usera. Wydzielenie modułu zwiększałoby więc bezpieczeństwo.
+</p>
+<p>
+    Pozostaje sprawa couplingu tych aplikacji. Pierwsza aplikacja oferuje płatne konta z różnymi poziomami usługi.
+    Czyli proste odpytywanie aplikacja => moduł płatności.
+    Moduł udostępia wersjonowane API aby wygodnie deployować zmiany niezależnie w dwóch aplikacjach.
+</p>
+<p>
+    Druga aplikacja była bardziej skomplikowana.
+    Też oferuje płatne konta ale dodatkowo daje zarabiać innemu typowi użytkowników za akcje wykonane w serwisie.
+    Czyli oprócz wcześniejszej komunikacji  aplikacja => moduł płatności tutaj moduł płatności musi odpytwać aplikację
+    aby naliczyć odpowiednią wypłatę użytkownikom. Na tym poziomie komunikacji oba systemy mogłyby się bez problemu odpytywać nawzajem.
+</p>
+
+<p>
+    Nie ma sensu dla takiej prostej komunikacji budować systemu zdarzeń kolejkowanych z uwagi na to, że po uruchomieniu
+    produkcyjnemu kolejek zdarzeń późniejsza modyfikacja jest trudna.
+</p>
+
+<p>
+    Jeśli mam dwa wersjonowane endpointy, możemy sobie bezpiecznie i niezależnie zmieniać obie aplikacje.
+    Jedna będzie używać starszej wersji endpointu dopóki nie zostanie rozbudowana.
+    Nowa wersja endpointu będzie sobie na nią bezpiecznie czekać.
+</p>
+
+<p>
+    Ale jeśli puścimy eventy w ruch a potem będziemy chcieli zmodyfikować event?
+    Ok, zrobimy deploy, zaczną być produkowane i przyjmowane eventy  nowego typu.
+    A co ze starymi które już są w kolejce? Będziesz czekał aż w nocy kolejka opustoszeje aby zrobić deploy?
+    A jeśli aplikacja używana jest 24/7 i nie ma takiej możliwości?
+</p>
+<p>
+    Tutaj by się przydało wersjonowanie eventów. Ale nie każdy o tym myśli przed implementacją.
+    To tylko wydzielenie modułu płatności. Jeśli będzie wydzielone więcej modułów? Trzeba zacząć myśleć
+    o przechowywaniu i odtwarzaniu stanu całości rozproszonego systemu w danej chwili.
+    A może zorganizować to tak aby nie było stanu? Czym więc są zdarzenia na kolejce? To jest potężna tematyka.
+    Polecam podcasty tego Pana na ten temat.
+    <a href=”https://bettersoftwaredesign.pl/”>bettersoftwaredesign.pl</a>
+</p>
+
+<p>
+    Dlatego na początku lepiej wydzielać serwisy z monolitu powoli.
+    Albo jeśli piszemy nową funkcjonalność.
+    Zrobiłem tak jeszcze w innym systemie, tym razem e-commerce.
+    Klient potrzebował bardzo specyficznej obsługi kurierów którzy mieli odbierać paczki.
+    I to z kilku firm naraz co oznacza integracje do kilku API i połączenie tego w jednych regułach biznesowych.
+    Idealny kandydat do wydzielania na mikroserwis i odizolowanie tego od reszty sklepu.
+</p>
+
+<p>
+    Tutaj przechodzimy do kolejnej ważnej rzeczy w DDD.
+    Mianowicie kod odpowiedzialny za proces biznesowy ma być zupełnie odizolowany więc w przypadku mikroserwisu do
+    kurierów nie było mowy aby jakikolwiek request był wysyłany z warstwy biznesowej.
+    Da się tak zrobić i to będzie testowalne oraz odporne na późniejsze zmiany.
+    Pisanie niezależnej warsty biznesowej jest uproszczeniem.
+</p>
+
+<p>
+    I tutaj przechodzimy do smutnej konkluzji.
+    W ogromnej liczbie projektów gdzie to mogłoby być wydzielone taka logika biznesowa jest splątana z frameworkiem.
+    Z Laravelem, Symfony, Yii2 itp.
+    Logika rozwalona po wszystkich elementach frameworka i zwykle bez testów.
+</p>
+
+<p>
+    Stąd wynika, że pisanie testów, stosowane DDD czy nawet wydzielanie logiki biznesowej jest wyznacznikiem projektów dobrej jakości.
+    Przeciwieństwem dopisywania kolejnego ifa w kontrolorze na 8000 linijek.
+    Ale nie popadajmy w pesymizm. Dobra wiadomośc jest taka, że nie ma takiej aplikacji którą ktoś napisał słabo,
+    nawet nie ze swojej winy(bo może miał napięty deadline?) której by się nie dało poprawić.
+    Dlatego jeśli masz taką aplikację, nie możesz znieść jej bugów, chcesz na niej więcej zarabiać polecam zakładkę kontakt.
+</p>
