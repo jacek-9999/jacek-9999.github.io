@@ -1,0 +1,60 @@
+<p>
+<h4>Kasowanie kodu jest tak sam ważne jak pisanie</h4>
+<hr>
+</p>
+
+<p>
+    W większości spraw związanych z programowaniem zastanawiam się jak dany temat ma się do wartości biznesowej i zarabiania pieniędzy. Jak więc ma się do tego kasowanie kodu?
+    Przecież to nie wytwarza nowych funkcjonalności.
+</p>
+
+<p>
+    Rzeczywiście, jest to sprawa głównie estetyczna dla programistów. Są jednak przypadki gdy ma o wiele poważniejsze przełożenie na projekt.
+    Aplikacja zwykle składa się z tysięcy plików z kodem źródłowym. Dajmy na to napisałeś coś, potem to coś okazało się niepotrzebne i zamiast to skasować zostawiłeś.
+</p>
+
+<p>
+    Co z tego wynika?<br>
+    Po pierwsze masz więcej kodu do analizy za każdym razem i musisz pamiętać, że to jest nieużywane.<br>
+    Drugie wynika z pierwszego. Jeśli zapamiętasz, że dana klasa jest nieużywana to przestaniesz do niej zaglądać.<br>
+    Trzy. Jeśli przestaniesz tam zaglądać to nie znaczy, że problem jest z głowy.
+    Przychodzi nowy gostek do projektu i zaczyna tego używać.
+    A tam jest np. usuwanie rekordów z pewnej tabeli z której już nie powinno się usuwać bo jest pole soft_delete.
+    I nagle kasuje ci rekordy z bazy w sposób jaki już nie chcesz. Co najlepsze nie wywołuje żadnych błędów i nie zostawia śladu logach.
+    Znalezienie przyczyny będzie przypominać szukanie duchów.
+</p>
+
+
+<p>
+    Ale to jeszcze nie jest najgorsze. Projekty które żyją dłużej mają często naprawdę starożytny kod o którym często nawet nikt nie jest w stanie stwierdzić na 100%, że jest używany.
+</p>
+
+<p>
+    Dajmy na to, ten zapomniany kawałek kodu jest wystawiony metodą restową czy soapową gdzieś na zewnątrz. Nie twierdzę, że zaraz ktoś go wykorzysta aby się włamać i ukraść a potem zaszyfrować bazę.
+    Ale powiększa obszar jaki może być wykorzystany do takich celów. Powiększa możliwości atakującego.
+</p>
+
+
+<p>
+    Jak dla mnie powodów aby kasować nieużywany kod jest zanadto. Ale to nie jest takie proste.
+    Po pierwsze musisz znać system na tyle, aby wiedzieć na 100%, że to nie jest używane.
+</p>
+
+
+<p>
+    W dobrym poznaniu systemu pomagają testy jednostkowe. Potrafią pokazać obraz zależności w systemie tak aby nie bać się kasowania śmieci. Szczególnie przydatne przy polach i metodach prywatnych.
+    Piszesz testy klasy, i kasujesz wszystko dopóki test przechodzi tak jak rzeźbiarz usuwa niepotrzebny kamień z rzeźby. Dodałbym, że jako programiści rzeźbimy często w innym materiale niż kamień ale nie chcę tutaj rzucać wulgaryzmami.
+</p>
+
+
+<p>
+    Żeby kasować całe klasy musisz mieć testy na trochę wyższym poziomie niż jednostkowe. Coś co sprawdza podstawowe funkcjonalności jak logowanie do aplikacji. Na szczęście nowoczesne frameworki z Dependency Injection sprawdzają czy mają daną klasę do załadowania więc możesz usuwać spokojnie. Framework da ci znać, że skasowałeś coś co jednak było potrzebne.
+</p>
+
+<p>
+    Choć to chyba w 2022 oczywiste, musisz mieć też system kontroli wersji. Jeszcze rok temu miałem zlecenie w systemie gdzie było wersjonowanie plikow v1, v2 i tak dalej. W takich przypadkach sobie nie pokasujesz plików dopóki nie zaczniesz tego śledzić systemem kontroli versji.
+</p>
+<p>
+    Taka błaha z pozoru sprawa jak usuwanie niepotrzebnego kodu a ma tyle implikacji. Ale jak to mówią, najlepszy kod to ten którego nie ma. Bo się nie zepsuje i nie trzeba go utrzymywać.
+    Tak więc, miłego usuwania!
+</p>
