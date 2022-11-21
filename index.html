@@ -10,20 +10,21 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' *.analytics.google.com *.google-analytics.com; connect-src 'self' *.analytics.google.com *.google-analytics.com">
     <title>Jacek-9999</title>
     <link rel="stylesheet" href="lib/bootstrap-dark.min.css">
+    <link rel="stylesheet" href="lib/custom.css">
     <script src="lib/bootstrap.min.js"></script>
     <script src="lib/jquery-3.6.1.min.js"></script>
     <script src="lib/popper.min.js"></script>
   </head>
   <body>
-  <div class="container">
-    <div class="col-lg-12 col-sm-12 mt-2">
-      <a type="button" id="about_button" href="#about" class="btn btn-outline-danger" role="button">O mnie</a>
-      <a type="button" href="#case_studies" class="btn btn-outline-info" role="button">Case Study</a>
-      <a type="button" href="#contact" class="btn btn-outline-success" role="button">Kontakt</a>
+  <div class="container col-lg-5">
+    <div class="d-flex mt-2">
+        <a type="button" id="about_button" href="#about" class="btn btn-outline-danger mr-auto p-2" role="button">O mnie</a>
+        <a type="button" href="#case_studies" class="btn btn-outline-info p-2 mr-1" role="button">Case Study</a>
+        <a type="button" href="#contact" class="btn btn-outline-success p-2" role="button">Kontakt</a>
     </div>
     <hr>
-    <div>
-      <div id="article" class="col-lg-12 col-sm-12 m-2">
+    <div class="d-flex justify-content-center">
+      <div id="article" class="col-lg-8 col-sm-12 m-2 text-justify">
         content
       </div>
     </div>
