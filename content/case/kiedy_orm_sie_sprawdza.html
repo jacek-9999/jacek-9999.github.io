@@ -1,0 +1,100 @@
+<p>
+<h4>Kiedy ORM się nie sprawdza a kiedy nie?</h4>
+<hr>
+</p>
+
+<p>
+    Największa i najlepiej zarabiająca aplikacja w której pracowałem była nakładką PHP na Postgresa.
+    Nie miała ORM-a a żeby cokolwiek zrobić w tej aplikacji musiałeś kumać bazę. A dokładnie bazę danych. Wiedzieć co to explain i ogólnie co robisz.
+<p/>
+
+<p>
+    Nie była to zła aplikacja pod względem czytelności. Przydałoby się wydzielenie kilku mikroserwisów ale ogólnie nie było tragedii.
+</p>
+<p>
+    Korzystanie z bazy danych bez warstwy ORM zmuszało do myślenia gdy dodawałem nowe funkcjonalności korzystające z nowych tabel, rozbudowy istniejących. To już nie jest doklepanie kilku nowych pól do migracji w Laravelu a potem uruchomienie jej. To nie są manipulacje adnotacjami w Doctrine.
+</p>
+
+<p>
+    Inny projekt komercyjny bez ORM-a. Przejąłem go i na początku się przestraszyłem bo wydawał si zamotany.
+    Ale po pierwsze już za moment zarabiał bo osobiście podpinałem do niego płatności.
+    A po drugie przy okazji dodawania tego modułu płatności zauważyłem, że można te moduły wpinać bardzo elastycznie.
+</p>
+
+<p>
+    Mój moduł był niezależny, miał własny skrypt instalacyjny i deinstalacyjny.
+    Tworzył własną grupę tabel i jeśli by go przenieść na osobny serwer to byłby pełnoprawnym mikroserwisem.
+    Miał warstwę logiki biznesowej i osobną warstwę dostępu do bazy implementującą interfejs, za pomocą wzorców Command i Query.
+    Czyli jeśli chciałbyś napisać kolejną warstwę dostępu do zupełnie innej bazy(nierelacyjnej?) to dla modułu byłoby bez różnicy.
+    Implementujesz metody interfejsu i tyle go obchodzi.
+    Gdzie to sobie zapisujesz jest nieważne, chcesz to zapisuj lokalnie w plikach csv albo na AWS.
+</p>
+
+<p>
+    Brak ORM umożliwia niezależne zmapowanie procesu biznesowego. Jak to zrobisz z ORM-em?
+    To już nie będzie niezależne. Można próbować to rozdzielić wzorcem Command-Query.
+    I na przykład do query dać czysty sql bo query są częściej używane i muszą być lepiej zoptymalizowane.
+    A w command zostawić ORM. Ale w większości projektów proces biznesowy będzie spięty z aktualnie używanym ORM bo tak jest szybciej i łatwiej pisać.
+    Dopiero potem zaczną się fikołki ze wstrzykiwaniem zależności przy testowaniu tego o ile ktoś sobie będzie zaprzątał głowę testami.
+    Po pewnym czasie(zależnym od tempa modyfikacji początkowo napisanego kodu) zacznie gryźć złożoność tych modeli i dług techniczny.
+</p>
+<p>
+    W większości innych projektów spotykałem się z użyciem ORM.
+    Zwykle to było ok dla niezbyt dużych systemów. Dostałem gotową bazę, miałem zrobić cruda.
+    Użyłem ORM-a z Yii2 i na podstawie bazy miałem wygenerowany kod a potem jedynie to doszlifowałem.
+    Czy to dobrze? Mogłem polecić klientowi Symfony, wpisywać joiny w adnotacje Doctrina i lepić to tygodniami.
+    Także ORM ORM-owi nierówny.
+</p>
+
+<p>
+    Mam też dwa dość słabe przykłady, oba w Laravelu i jego Eloquencie. Oba przejąłem gdy już miały po parę lat.
+    W obu przypadkach widać było, że powstały w taki sam sposób choć te projekty były  tworzone w różnych firmach
+    dla zupełnie różnych klientów w różnych częściach świata.
+</p>
+
+<p>
+    Ludzie tworzyli je jak w tutorialu.
+    Dodawali model, przypisywali mu tabelę w migracji.
+    Dodawali model, dodawali relację do innego modelu.
+    Dodawali pole w istniejącym. I cyk kolejna migracja.
+</p>
+
+<p>
+    W efekcie było po ponad setkę modeli w każdym z projektów i te modele były na sztywno powiązane z Eloquent ORM.
+    Czyli mieliśmy skomplikowaną wiedzę domenową danego biznesu wciśniętą na siłę w folder z modelami Laravela.
+    Wiedzę wciśniętą na siłę w rzeczowniki jakimi są modele w ORM a jak wiadomo z DDD ważniejsze są przymiotniki.
+</p>
+
+<p>
+    W obu projektach był problem N+1. Czyli masz np. tabelę „auta” i tabelę „koła”. W czystym sql jak chcesz listę kół według auta robisz SELECT id, car_id, name FROM wheels ORDER BY car_id.
+    ORM może tego szukać poprzez samochody czyli najpierw pobierze listę samochodów(pierwszy SELECT), potem dla każdego będzie pobierał koła(srylion SELECT-ów).
+    Są narzędzia do detekcji N+1, można samemu tego szukać zjawiska w logach. Tylko jak masz te +100 modeli w Eloquencie to powodzenia.
+    O tym, że modele nie były w ogóle testowane wspominam z kronikarskiego obowiązku.
+</p>
+
+<p>
+    Dlatego gdy tworzyłem ostatnio nowy projekt komercyjny w Laravelu nie chciałem popełnić tego błędu.
+    Nie każda tabela w bazie była zmapowana jako model Laravela.
+</p>
+
+<p>
+    Proste operacje crudowe były rzeczywiście robione z poziomu ORM na tych tabelach co potrzeba.
+    Ale była skomplikowana logika która opierała się o warstwę dostępu do danych wewnątrz której był czysty SQL.
+    Aby napisać odpowiednik jednego takiego SQL w ORM musiałbym robić instancję kilku typów modeli pobranych z bazy i operować nimi.
+</p>
+<p>
+    Ten projekt był lepszy niż projekty z setką powiązanych i niestestowanych modeli,
+    był efektem nauki na kosztownych błędach w poprzednich legacy projektach. Ale jeszcze nie był tak dobry jak mógłby być. Gdybym go dzisiaj pisał…
+    Tutaj skasowałem cały akapit bo w sumie zdradziłbym na tacy sposób na zarobienie pieniędzy.
+    Szczególnie patrząc na konkurencję która lepi kulki z błota.
+</p>
+<p>
+    Zainteresowanych tworzeniem quality software’u zorientowanego na zarabianie zapraszam do działu kontakt.
+    Z rzemiosła jestem programistą ale w duszy przedsiębiorcą.
+    Ze mną dogadasz się lepiej niż z typowymi typkami z IT którzy kłócą się między sobą o taby i spacje.
+</p>
+<p>
+    Jeśli jesteś leaderem technicznym zespołu również pisz.
+    Oprócz usług programistycznych mogę w ramach kilku godzin obejrzeć Twój projekt przez pryzmat kilkudziesięciu projektów w których ja brałem udział.
+    Kilka godzin i otrzymasz feedback z zewnątrz ze świeżym spojrzeniem.
+</p>
